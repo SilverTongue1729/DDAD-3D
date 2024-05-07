@@ -10,7 +10,7 @@ from reconstruction import *
 
 os.environ['CUDA_VISIBLE_DEVICES'] = "0,1,2"
 
-def loss_fucntion(a, b, c, d, config):
+def loss_function(a, b, c, d, config):
     cos_loss = torch.nn.CosineSimilarity()
     loss1 = 0
     loss2 = 0
@@ -93,7 +93,7 @@ def domain_adaptation(unet, config, fine_tune):
                 
                 
 
-                loss = loss_fucntion(reconst_fe, target_fe, target_frozen_fe,reconst_frozen_fe, config)
+                loss = loss_function(reconst_fe, target_fe, target_frozen_fe,reconst_frozen_fe, config)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()

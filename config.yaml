@@ -13,7 +13,7 @@ data :
 
 
 model:
-  DDADS: False
+  DDADS: False  # DDAD small
   checkpoint_dir: checkpoints/MVTec   #MTD  #MVTec  #VisA
   checkpoint_name: weights
   exp_name: default
@@ -29,8 +29,8 @@ model:
   w_DA : 3 #3 # Conditionig parameter for domain adaptation. The higher the value, the more the model is conditioned on the target image.
   DLlambda : 0.1 # 0.1 for MVTec and 0.01 for VisA
   trajectory_steps: 1000
-  test_trajectoy_steps: 250   # Starting point for denoining trajectory.
-  test_trajectoy_steps_DA: 250  # Starting point for denoining trajectory for domain adaptation.
+  test_trajectoy_steps: 250   # Starting point for denoising trajectory.
+  test_trajectoy_steps_DA: 250  # Starting point for denoising trajectory for domain adaptation.
   skip : 25   # Number of steps to skip for denoising trajectory.
   skip_DA : 25
   eta : 1 # Stochasticity parameter for denoising process.

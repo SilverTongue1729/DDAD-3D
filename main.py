@@ -10,7 +10,7 @@ from ddad import *
 os.environ['CUDA_VISIBLE_DEVICES'] = "0,1,2"
 
 def build_model(config):
-    if config.model.DDADS:
+    if config.model.DDADS:  # DDAD small
         unet = UNetModel(config.data.image_size, 32, dropout=0.3, n_heads=2 ,in_channels=config.data.input_channel)
     else:
         unet = UNetModel(config.data.image_size, 64, dropout=0.0, n_heads=4 ,in_channels=config.data.input_channel)
@@ -26,7 +26,7 @@ def train(config):
     unet = torch.nn.DataParallel(unet)
     # checkpoint = torch.load(os.path.join(os.path.join(os.getcwd(), config.model.checkpoint_dir), config.data.category,'1000'))
     # unet.load_state_dict(checkpoint)  
-    trainer(unet, config.data.category, config)#config.data.category, 
+    trainer(unet, config.data.category, config)  # config.data.category, 
 
 
 def detection(config):
