@@ -2,10 +2,10 @@ data :
   name: MVTec3D  #MVTec #MTD #VisA 
   data_dir: datasets/MVTec3D  #MVTec #VisA #MTD  
   category: cable_gland  # ['bagel', 'cable_gland', 'carrot', 'cookie', 'dowel', 'foam', 'peach', 'potato', 'rope', 'tire']
-  image_size: 400 
-  batch_size: 32 # 32 for DDAD and 16 for DDADS
-  DA_batch_size: 16 #16 for MVTec and [macaroni2, pcb1] in VisA, and 32 for other categories in VisA
-  test_batch_size: 16 #16 for MVTec, 32 for VisA
+  image_size: 256 
+  batch_size: 1 # 32 # 32 for DDAD and 16 for DDADS (set 1 for debugging)
+  DA_batch_size: 1 # 16 #16 for MVTec and [macaroni2, pcb1] in VisA, and 32 for other categories in VisA (set 1 for debugging)
+  test_batch_size: 1 # 16 #16 for MVTec, 32 for VisA (set 1 for debugging) 
   mask : True 
   input_channel : 4  # 3RGB and 1 for depth map
 

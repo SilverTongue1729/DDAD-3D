@@ -1,6 +1,5 @@
 import os
 from glob import glob
-from pathlib import Path
 import numpy as np
 import torch
 import torch.utils.data
@@ -12,9 +11,15 @@ class Dataset_maker(torch.utils.data.Dataset):
     def __init__(self, root, category, config, is_train=True):
         self.image_transform = transforms.Compose(
             [
-                transforms.Resize((config.data.image_size, config.data.image_size)),  
+                transforms.Resize((config.data.image_size, config.data.image_size)),
                 transforms.ToTensor(),  # Scales data into [0,1]
                 transforms.Lambda(lambda t: (t * 2) - 1)  # Scale between [-1, 1]
+            ]
+        )
+        self.depth_transform = transforms.Compose(
+            [
+                transforms.Resize((config.data.image_size, config.data.image_size)),
+                transforms.ToTensor(),  # Scales data into [0,1]
             ]
         )
         self.config = config
@@ -63,9 +68,9 @@ class Dataset_maker(torch.utils.data.Dataset):
         depth = (depth - np.min(depth)) / (np.max(depth) - np.min(depth)) * 255.0
         depth = depth.astype(np.uint8)
         
-        # Convert to single-channel PIL image
+        # Convert to single-channel PIL image and resize
         depth = Image.fromarray(depth).convert('L')
-        depth = self.image_transform(depth)
+        depth = self.depth_transform(depth)
         
         # Concatenate RGB image with depth map
         image_4ch = torch.cat((image, depth), 0)
