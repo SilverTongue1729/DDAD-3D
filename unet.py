@@ -247,6 +247,8 @@ class UNetModel(nn.Module):
                 channel_mults = (1, 2, 3, 4)
             elif img_size == 32:
                 channel_mults = (1, 2, 3, 4)
+            elif img_size == 400:
+                channel_mults = (1, 1, 2, 2, 4, 4)
             else:
                 raise ValueError(f"unsupported image size: {img_size}")
         attention_ds = []

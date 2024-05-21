@@ -77,6 +77,7 @@ if __name__ == "__main__":
     torch.cuda.empty_cache()
     args = parse_args()
     config = OmegaConf.load(args.config)
+    print(f"Device: {config.model.device}")
     print("Class: ",config.data.category, "   w:", config.model.w, "   v:", config.model.v, "   load_chp:", config.model.load_chp,   "   feature extractor:", config.model.feature_extractor,"         w_DA: ",config.model.w_DA,"         DLlambda: ",config.model.DLlambda)
     print(f'{config.model.test_trajectoy_steps=} , {config.data.test_batch_size=}')
     torch.manual_seed(42)
