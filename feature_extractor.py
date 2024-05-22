@@ -60,7 +60,7 @@ def domain_adaptation(unet, config, fine_tune):
         shuffle=True,
         num_workers=config.model.num_workers,
         drop_last=True,
-    )   
+    )
 
     if fine_tune:      
         unet.eval()

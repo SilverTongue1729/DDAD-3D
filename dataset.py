@@ -29,52 +29,56 @@ class Dataset_maker(torch.utils.data.Dataset):
                 transforms.ToTensor(),  # Scales data into [0,1]
             ]
         )
-        
+
         if is_train:
             if category:
-                self.image_files = glob(os.path.join(root, category, "train", "good", "rgb", "*.png"))
-                self.depth_files = glob(os.path.join(root, category, "train", "good", "xyz", "*.tiff"))
+                self.image_files = sorted(glob(os.path.join(root, category, "train", "good", "rgb", "*.png")))
+                self.depth_files = sorted(glob(os.path.join(root, category, "train", "good", "xyz", "*.tiff")))
             else:
-                self.image_files = glob(os.path.join(root, "train", "good", "rgb", "*.png"))
-                self.depth_files = glob(os.path.join(root, "train", "good", "xyz", "*.tiff"))
+                self.image_files = sorted(glob(os.path.join(root, "train", "good", "rgb", "*.png")))
+                self.depth_files = sorted(glob(os.path.join(root, "train", "good", "xyz", "*.tiff")))
         else:
             if category:
-                self.image_files = glob(os.path.join(root, category, "test", "*", "rgb", "*.png"))
-                self.depth_files = glob(os.path.join(root, category, "test", "*", "xyz", "*.tiff"))
+                self.image_files = sorted(glob(os.path.join(root, category, "test", "*", "rgb", "*.png")))
+                self.depth_files = sorted(glob(os.path.join(root, category, "test", "*", "xyz", "*.tiff")))
             else:
-                self.image_files = glob(os.path.join(root, "test", "*", "rgb", "*.png"))
-                self.depth_files = glob(os.path.join(root, "test", "*", "xyz", "*.tiff"))
+                self.image_files = sorted(glob(os.path.join(root, "test", "*", "rgb", "*.png")))
+                self.depth_files = sorted(glob(os.path.join(root, "test", "*", "xyz", "*.tiff")))
 
         print(f"Found {len(self.image_files)} RGB images")
         print(f"Found {len(self.depth_files)} Depth images")
-        
+
         self.is_train = is_train
+
+        # Ensure alignment of image and depth files by their numeric identifiers
+        self.image_files.sort(key=lambda f: int(re.findall(r'\d+', os.path.basename(f))[0]))
+        self.depth_files.sort(key=lambda f: int(re.findall(r'\d+', os.path.basename(f))[0]))
 
     def __getitem__(self, index):
         image_file = self.image_files[index]
         depth_file = self.depth_files[index]
-        
+
         # Load and transform RGB image
         image = Image.open(image_file)
         image = self.image_transform(image)
-        
+
         # Load depth map from tiff file
         xyz_data = tifffile.imread(depth_file)
 
-        # Extract the Z coordinate
+        # Extract the Z coordinate directly for the depth map
         depth = xyz_data[:, :, 2]
-        
-        # Normalize depth values to [0, 255] and convert to uint8
+
+        # Normalize depth values to [0, 255] and convert to uint8 for visualization
         depth = (depth - np.min(depth)) / (np.max(depth) - np.min(depth)) * 255.0
         depth = depth.astype(np.uint8)
-        
+
         # Convert to single-channel PIL image and resize
         depth = Image.fromarray(depth).convert('L')
         depth = self.depth_transform(depth)
-        
+
         # Concatenate RGB image with depth map
         image_4ch = torch.cat((image, depth), 0)
-        
+
         if self.is_train:
             label = 'good'
             return image_4ch, label
@@ -97,7 +101,7 @@ class Dataset_maker(torch.utils.data.Dataset):
                 else:
                     target = torch.zeros([1, image_4ch.shape[-2], image_4ch.shape[-1]])
                     label = 'defective'
-                
+
             return image_4ch, target, label
 
     def __len__(self):
